@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "IrrigaVale",
+    "slug": "irrigavale",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "irrigavale",
+    "platforms": [
+      "android",
+      "web"
+    ],
+    "android": {
+      "package": "com.irrigavale.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#1D4ED8"
+      }
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F3F7FC"
+        }
+      ]
+    ]
+  }
+}

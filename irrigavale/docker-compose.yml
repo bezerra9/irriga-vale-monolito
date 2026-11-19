@@ -1,0 +1,51 @@
+# Ambiente local completo: PostgreSQL + API.
+# Uso: docker compose up --build   (sobe banco, API e app de uma vez)
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: irrigavale
+      POSTGRES_PASSWORD: irrigavale
+      POSTGRES_DB: irrigavale
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U irrigavale -d irrigavale"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+asyncpg://irrigavale:irrigavale@db:5432/irrigavale
+      JWT_SECRET: dev-only-change-me
+      SCHEDULER_ENABLED: "true"
+      SMS_PROVIDER: log
+      CORS_ORIGINS: '["http://localhost:8081"]'
+    ports:
+      - "8000:8000"
+
+  mobile:
+    build: ./mobile
+    depends_on:
+      - api
+    env_file: ./mobile/.env
+    environment:
+      CI: "false"
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./mobile:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+
+volumes:
+  pgdata:
